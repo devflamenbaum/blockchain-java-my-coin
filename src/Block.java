@@ -7,6 +7,8 @@ public class Block {
     private String data;
     private long timeStamp;
 
+    private int nounce;
+
     public Block(String data, String previousHash){
         this.data = data;
         this.previousHash = previousHash;
@@ -15,6 +17,17 @@ public class Block {
     }
 
     public String calculateHash(){
-        return StringUtil.applySha256(previousHash + Long.toString(timeStamp) + data);
+        return StringUtil.applySha256(
+                previousHash + timeStamp + nounce + data
+        );
+    }
+
+    public void mineBlock(int difficulty){
+        String target = new String(new char[difficulty]).replace('\0', '0');
+        while(!hash.substring( 0, difficulty).equals(target)){
+            nounce++;
+            hash = calculateHash();
+        }
+        System.out.println("Block Mined!!! : " + hash);
     }
 }
